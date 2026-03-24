@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Any
 
 import pandas as pd
@@ -21,12 +22,27 @@ from utils.validation import validate_credit_payload
 app = Flask(__name__)
 
 
-try:
-    MODEL = load_model()
-    MODEL_LOAD_ERROR = None
-except Exception as exc:
-    MODEL = None
-    MODEL_LOAD_ERROR = str(exc)
+def initialize_model() -> tuple[Any | None, str | None]:
+    try:
+        model = load_model()
+        return model, None
+    except FileNotFoundError:
+        try:
+            from train_model import DATASET_PATH as TRAIN_DATASET_PATH
+            from train_model import MODEL_PATH as TRAIN_MODEL_PATH
+            from train_model import load_dataset, save_model, train_and_evaluate
+
+            dataframe = load_dataset(TRAIN_DATASET_PATH)
+            trained_model = train_and_evaluate(dataframe)
+            save_model(trained_model, TRAIN_MODEL_PATH)
+            return trained_model, None
+        except Exception as exc:
+            return None, f"Modèle introuvable et auto-entraînement échoué: {exc}"
+    except Exception as exc:
+        return None, str(exc)
+
+
+MODEL, MODEL_LOAD_ERROR = initialize_model()
 
 ensure_history_file()
 
@@ -172,4 +188,4 @@ def historique() -> Any:
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)

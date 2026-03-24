@@ -1,0 +1,2 @@
+-r tp_credit/requirements.txt
+gunicorn
