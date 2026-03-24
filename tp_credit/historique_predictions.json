@@ -1,0 +1,16 @@
+[
+  {
+    "timestamp": "2026-03-24T11:36:51",
+    "donnees_recues": {
+      "age": 35,
+      "revenu_mensuel": 12000.0,
+      "montant_credit_demande": 90000.0,
+      "duree_remboursement_mois": 36,
+      "nb_credits_anterieurs": 1,
+      "situation_familiale": "marie",
+      "type_emploi": "fonctionnaire"
+    },
+    "decision": "ACCORDÉ",
+    "confiance": "96.0%"
+  }
+]
